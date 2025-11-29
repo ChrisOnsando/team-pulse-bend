@@ -69,9 +69,7 @@ CORS_ALLOWED_ORIGINS = config(
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    'Access-Control-Allow-Origin',
-]
+CCORS_ALLOW_HEADERS = list(default_headers)
 
 # CSRF Trusted Origins (for Railway deployment)
 CSRF_TRUSTED_ORIGINS = config(
