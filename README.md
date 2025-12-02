@@ -51,6 +51,15 @@ The API will be available at `http://localhost:8000`
 
 Admin panel: `http://localhost:8000/admin`
 
+## 🚀 Admin Credentials
+
+```
+Email: teampulseadmin@example.com
+Password: Admin123
+
+```
+
+
 ## 🔗 API Endpoints
 
 ### Base URL

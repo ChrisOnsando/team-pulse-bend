@@ -1,4 +1,3 @@
-from typing import Any
 from django.contrib.auth import get_user_model
 from rest_framework import generics, status
 from rest_framework.generics import GenericAPIView
@@ -13,6 +12,7 @@ from users.serializers import (
     UserSerializer,
     UserUpdateSerializer,
 )
+from django.contrib.auth import authenticate
 
 User = get_user_model()
 
@@ -87,3 +87,44 @@ class UserMeView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class LoginView(APIView):
+    """
+    Custom login view that returns user details along with tokens.
+    """
+    
+    def post(self, request: Request) -> Response:
+        email = request.data.get('email')
+        password = request.data.get('password')
+        
+        if not email or not password:
+            return Response(
+                {"error": "Email and password are required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        user = authenticate(username=email, password=password)
+        
+        if user is None:
+            return Response(
+                {"error": "Invalid credentials"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        
+        if not user.is_active:
+            return Response(
+                {"error": "User account is disabled"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        
+        refresh = RefreshToken.for_user(user)
+        
+        response_data = {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+        }
+        
+        return Response(response_data, status=status.HTTP_200_OK)
+    

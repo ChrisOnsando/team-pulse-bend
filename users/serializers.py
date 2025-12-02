@@ -66,7 +66,23 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
 
+
+class LoginResponseSerializer(serializers.ModelSerializer):
+    refresh = serializers.CharField()
+    access = serializers.CharField()
+    
+    class Meta:
+        model = User
+        fields = (
+            "first_name",
+            "last_name",
+            "refresh",
+            "access",
+        )
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
     
