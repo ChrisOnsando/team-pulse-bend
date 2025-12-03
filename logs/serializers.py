@@ -5,6 +5,7 @@ from logs.models import PulseLog, EventLog
 
 class PulseLogSerializer(serializers.ModelSerializer):
     id = serializers.CharField(read_only=True)
+    user = serializers.UUIDField(read_only=True)
     user_name = serializers.CharField(source="user.username", read_only=True)
     team_name = serializers.CharField(source="team.team_name", read_only=True)
     mood = serializers.IntegerField()
@@ -32,7 +33,11 @@ class PulseLogSerializer(serializers.ModelSerializer):
             "week_index",
             "created_at",
         )
-        read_only_fields = ("id", "timestamp", "created_at")
+        read_only_fields = ("id", "user", "timestamp", "created_at")
+    
+    def create(self, validated_data: Any) -> Any:
+        validated_data["user"] = self.context["request"].user
+        return super().create(validated_data)
 
 
 class EventLogSerializer(serializers.ModelSerializer):
