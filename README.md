@@ -622,9 +622,99 @@ Authorization: Bearer {admin_access_token}
 DELETE /api/v1/event-logs/{log_id}/
 Authorization: Bearer {admin_access_token}
 ```
+### Team Feedbacks
 
+#### Create Non-Anonymous Feedback
+```http
+Post /api/v1/team-feedbacks/
+Authorization: Bearer {access_token}
+```
+**Request:**
+```json
+'{
+    "message": "Great team collaboration this week!",
+    "is_anonymous": false
+  }'
+```
+**Response:**
+```json
+{
+  "id": "bb0e8400-e29b-41d4-a716-446655440000",
+  "username": "johndoe",
+  "message": "Great team collaboration this week!",
+  "is_anonymous": false,
+  "created_at": "2024-01-15T10:30:00Z"
+}
+```
+#### Create Anonymous Feedback
+```http
+Post /api/v1/team-feedbacks/
+Authorization: Bearer {access_token}
+```
+**Request:**
+```json
+'{
+    "message": "Great team collaboration this week!",
+    "is_anonymous": true
+  }'
+```
+**Response:**
+```json
+{
+  "id": "bb0e8400-e29b-41d4-a716-446655440000",
+  "username": "anonymous",
+  "message": "Great team collaboration this week!",
+  "is_anonymous": true,
+  "created_at": "2024-01-15T10:30:00Z"
+}
+```
+
+#### List All Feedbacks
+```http
+Get /api/v1/team-feedbacks/
+Authorization: Bearer {access_token}
+```
+**Response:**
+```json
+{
+  "count": 15,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "cc0e8400-e29b-41d4-a716-446655440000",
+      "username": "Anonymous",
+      "message": "I think we need to improve our communication.",
+      "is_anonymous": true,
+      "created_at": "2024-01-15T10:35:00Z"
+    },
+    {
+      "id": "bb0e8400-e29b-41d4-a716-446655440000",
+      "username": "johndoe",
+      "message": "Great team collaboration this week!",
+      "is_anonymous": false,
+      "created_at": "2024-01-15T10:30:00Z"
+    }
+  ]
+}
+```
+
+#### Get Specific Feedback
+```http
+Get /api/v1/team-feedbacks/{feedback_id}/
+Authorization: Bearer {access_token}
+```
+#### Delete Feedback (Own feedback only)
+```http
+Get /api/v1/team-feedbacks/{feedback_id}/
+Authorization: Bearer {access_token}
+```
+#### Filter Anonymous Feedback Only
+```http
+Get /api/v1/team-feedbacks/?is_anonymous=true"
+Authorization: Bearer {access_token}
+```
 ---
-
 ## 👥 Contributor
 
 - **ChrisOnsando** - Backend Development

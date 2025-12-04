@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'moods',
     'workloads',
     'logs',
+    'feedback',
 ]
 
 MIDDLEWARE = [
