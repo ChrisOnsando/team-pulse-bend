@@ -2,7 +2,7 @@ from typing import Any
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -29,7 +29,14 @@ class TeamListCreateView(generics.ListCreateAPIView):
         if self.request.method == "POST":
             return [IsAdminUser()]
         return [IsAuthenticated()]
-
+class PublicTeamListView(generics.ListAPIView):
+    """
+    Public endpoint to list all teams (for signup page).
+    No authentication required.
+    """
+    serializer_class = TeamSerializer
+    permission_classes = (AllowAny,)
+    queryset = Team.objects.all()
 
 class TeamDetailView(generics.RetrieveUpdateDestroyAPIView):
     """

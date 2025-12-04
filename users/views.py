@@ -1,9 +1,7 @@
-from typing import Any
 from django.contrib.auth import get_user_model
 from rest_framework import generics, status
 from rest_framework.generics import GenericAPIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -16,8 +14,6 @@ from users.serializers import (
     UserUpdateSerializer,
     UserRoleUpdateSerializer,
 )
-from teams.models import Team
-from teams.serializers import TeamSerializer
 
 
 User = get_user_model()
@@ -122,18 +118,6 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method in ['PUT', 'PATCH']:
             return UserRoleUpdateSerializer
         return UserSerializer
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def public_teams_list(request: Request) -> Response:
-    """
-    Public endpoint to list all teams for signup purposes.
-    No authentication required.
-    """
-
-    teams = Team.objects.filter(is_active=True) 
-    serializer = TeamSerializer(teams, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserMeView(APIView):
     """

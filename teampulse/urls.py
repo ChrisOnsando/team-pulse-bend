@@ -9,13 +9,13 @@ from users.views import (
     UserListView,
     UserMeView,
     UserRegisterView,
-    public_teams_list,
-)
+ )
 from teams.views import (
     TeamAddMemberView,
     TeamDetailView,
     TeamListCreateView,
     TeamRemoveMemberView,
+    PublicTeamListView, 
 )
 from moods.views import MoodDetailView, MoodListCreateView
 from workloads.views import WorkloadDetailView, WorkloadListCreateView
@@ -38,9 +38,7 @@ urlpatterns = [
     path("api/v1/auth/login/", LoginView.as_view(), name="user-login"), 
     path("api/v1/auth/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
     path("api/v1/auth/logout/", LogoutView.as_view(), name="user-logout"),
-    path('api/v1/auth/signup/teams/', public_teams_list, name='public-teams'), 
 
-    
     # User endpoints
     path("api/v1/users/", UserListView.as_view(), name="user-list"),
     path("api/v1/users/me/", UserMeView.as_view(), name="user-me"),
@@ -51,6 +49,7 @@ urlpatterns = [
     path("api/v1/teams/<uuid:id>/", TeamDetailView.as_view(), name="team-detail"),
     path("api/v1/teams/<uuid:id>/add-member/", TeamAddMemberView.as_view(), name="team-add-member"),
     path("api/v1/teams/<uuid:id>/remove-member/", TeamRemoveMemberView.as_view(), name="team-remove-member"),
+    path("api/v1/public/teams/", PublicTeamListView.as_view(), name="public-team-list"),
     
     # Mood endpoints
     path("api/v1/moods/", MoodListCreateView.as_view(), name="mood-list-create"),
