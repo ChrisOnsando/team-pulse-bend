@@ -26,7 +26,15 @@ class UserSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(max_length=150, required=False)
     last_name = serializers.CharField(max_length=150, required=False)
     is_staff = serializers.BooleanField(read_only=True)
+    
     teams = serializers.StringRelatedField(many=True, read_only=True)
+    
+    team_ids = serializers.ListField(
+        child=serializers.UUIDField(),
+        write_only=True,
+        required=False,
+        allow_empty=True
+    )
     
     class Meta:
         model = User
@@ -40,12 +48,20 @@ class UserSerializer(serializers.ModelSerializer):
             "is_staff",
             "is_active",
             "teams",
+            "team_ids",
             "created_at",
         )
         read_only_fields = ("id", "created_at", "is_staff")
     
     def create(self, validated_data: Any) -> Any:
+        team_ids = validated_data.pop('team_ids', [])
         user = User.objects.create_user(**validated_data)
+        
+        if team_ids:
+            from teams.models import Team
+            teams = Team.objects.filter(id__in=team_ids)
+            user.teams.set(teams)
+        
         user.save()
         return user
 

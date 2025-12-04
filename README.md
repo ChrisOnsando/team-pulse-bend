@@ -631,10 +631,10 @@ Authorization: Bearer {access_token}
 ```
 **Request:**
 ```json
-'{
+{
     "message": "Great team collaboration this week!",
     "is_anonymous": false
-  }'
+  }
 ```
 **Response:**
 ```json
@@ -653,10 +653,10 @@ Authorization: Bearer {access_token}
 ```
 **Request:**
 ```json
-'{
+{
     "message": "Great team collaboration this week!",
     "is_anonymous": true
-  }'
+  }
 ```
 **Response:**
 ```json
