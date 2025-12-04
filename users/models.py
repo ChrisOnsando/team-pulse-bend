@@ -105,7 +105,6 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
     
     class Meta:
         db_table = "users"
-        ordering = ['name']
     
     def __str__(self) -> str:
         return self.username
