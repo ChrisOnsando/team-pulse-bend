@@ -1,10 +1,23 @@
 from typing import Any
 from rest_framework import serializers
 from teams.models import Team
-from users.serializers import UserSerializer
+
+
+class PublicTeamSerializer(serializers.ModelSerializer):
+    """Serializer for public team listing during signup"""
+    id = serializers.UUIDField(read_only=True)
+    name = serializers.CharField(source='team_name', read_only=True)
+    
+    class Meta:
+        model = Team
+        fields = ("id", "name")
+        read_only_fields = ("id",)
 
 
 class TeamSerializer(serializers.ModelSerializer):
+
+    from users.serializers import UserSerializer
+    
     id = serializers.CharField(read_only=True)
     team_name = serializers.CharField(max_length=255)
     members = UserSerializer(many=True, read_only=True)
