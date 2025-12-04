@@ -27,12 +27,17 @@ class UserSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(max_length=150, required=False)
     last_name = serializers.CharField(max_length=150, required=False)
     is_staff = serializers.BooleanField(read_only=True)
-    team = serializers.PrimaryKeyRelatedField(  
+    teams = serializers.PrimaryKeyRelatedField(
+        many=True,
         write_only=True,
-        required=True,  
+        required=False,
         queryset=Team.objects.all()
     )
-    team_name = serializers.SerializerMethodField()
+    team_names = serializers.StringRelatedField(
+        many=True,
+        read_only=True,
+        source='teams'
+    )
     
     class Meta:
         model = User
@@ -45,24 +50,19 @@ class UserSerializer(serializers.ModelSerializer):
             "last_name",
             "is_staff",
             "is_active",
-            "team",
-            "team_name",
+            "teams",
+            "team_names",
             "created_at",
         )
-        read_only_fields = ("id", "created_at", "is_staff", "team_name")
-    
-    def get_team_name(self, obj: Any) -> str:
-        """Get the first team name"""
-        first_team = obj.teams.first()
-        return first_team.team_name if first_team else ""
+        read_only_fields = ("id", "created_at", "is_staff", "team_names")
     
     def create(self, validated_data: Any) -> Any:
-        team = validated_data.pop('team', None)
+        teams = validated_data.pop('teams', [])
         
         user = User.objects.create_user(**validated_data)
         
-        if team:
-            user.teams.add(team)
+        if teams:
+            user.teams.set(teams)
         
         user.save()
         return user
@@ -82,7 +82,8 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         instance.last_name = validated_data.get("last_name", instance.last_name)
         instance.save()
         return instance
-    
+
+
 class UserRoleUpdateSerializer(serializers.ModelSerializer):
     """
     Serializer for updating user role (Admin only)

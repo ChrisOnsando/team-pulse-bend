@@ -16,7 +16,14 @@ from users.permissions import IsAdminUser
 
 User = get_user_model()
 
-
+class PublicTeamListView(generics.ListAPIView):
+    """
+    Public endpoint to list all teams (for signup page).
+    No authentication required.
+    """
+    serializer_class = TeamSerializer
+    permission_classes = (AllowAny,)
+    queryset = Team.objects.all()
 class TeamListCreateView(generics.ListCreateAPIView):
     """
     List all teams (authenticated users) or create a new team (admin only).
@@ -29,14 +36,6 @@ class TeamListCreateView(generics.ListCreateAPIView):
         if self.request.method == "POST":
             return [IsAdminUser()]
         return [IsAuthenticated()]
-class PublicTeamListView(generics.ListAPIView):
-    """
-    Public endpoint to list all teams (for signup page).
-    No authentication required.
-    """
-    serializer_class = TeamSerializer
-    permission_classes = (AllowAny,)
-    queryset = Team.objects.all()
 
 class TeamDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
