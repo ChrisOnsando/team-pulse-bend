@@ -35,7 +35,7 @@ class TeamFeedbackSerializer(serializers.ModelSerializer):
     
     def get_team_name(self, obj: Any) -> str:
         """
-        Return team name or 'General Feedback' if no team
+        Return team name or 'General' if no team
         """
         if obj.team:
             return obj.team.team_name
@@ -44,13 +44,12 @@ class TeamFeedbackSerializer(serializers.ModelSerializer):
     def create(self, validated_data: Any) -> Any:
         user = self.context["request"].user
         
+        team_id = validated_data.pop("team", None)
+        
         if user.is_staff:
-            team_id = validated_data.pop("team", None)
-            
             if team_id:
                 try:
-                    team = Team.objects.get(id=team_id)
-                    validated_data["team"] = team
+                    validated_data["team"] = Team.objects.get(id=team_id)
                 except Team.DoesNotExist:
                     raise serializers.ValidationError(
                         {"team": "Team not found"}
