@@ -1,3 +1,4 @@
+from typing import Any
 from django.contrib.auth import get_user_model
 from rest_framework import generics, status
 from rest_framework.generics import GenericAPIView
@@ -14,7 +15,6 @@ from users.serializers import (
     UserUpdateSerializer,
     UserRoleUpdateSerializer,
 )
-
 
 User = get_user_model()
 
@@ -118,6 +118,7 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method in ['PUT', 'PATCH']:
             return UserRoleUpdateSerializer
         return UserSerializer
+
 
 class UserMeView(APIView):
     """
