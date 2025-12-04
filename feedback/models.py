@@ -24,6 +24,8 @@ class TeamFeedback(TimeStampedModel):
         "teams.Team",
         on_delete=models.CASCADE,
         related_name="feedbacks",
+        null=True,
+        blank=True,
         help_text="Team the feedback is for"
     )
     message = models.TextField()
@@ -39,6 +41,7 @@ class TeamFeedback(TimeStampedModel):
             models.Index(fields=["-created_at"]),
             models.Index(fields=["team", "is_anonymous"]),
         ]
-    
+       
     def __str__(self) -> str:
-        return f"Feedback by {self.user.username} for {self.team.team_name}"
+        team_name = self.team.team_name if self.team else "General"
+        return f"Feedback by {self.user.username} for {team_name}"

@@ -16,7 +16,7 @@ class TeamFeedbackListCreateView(generics.ListCreateAPIView):
     serializer_class = TeamFeedbackSerializer
     permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ["is_anonymous"]
+    filterset_fields = ["is_anonymous", "team"]
     ordering_fields = ["created_at"]
     
     def get_queryset(self):  # type: ignore[no-untyped-def]

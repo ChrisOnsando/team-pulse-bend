@@ -8,8 +8,8 @@ class TeamFeedbackSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
     message = serializers.CharField()
     is_anonymous = serializers.BooleanField(default=False)
-    team = serializers.UUIDField(write_only=True, required=False)  
-    team_name = serializers.CharField(source="team.team_name", read_only=True)
+    team = serializers.UUIDField(write_only=True, required=False, allow_null=True)
+    team_name = serializers.SerializerMethodField()
     created_at = serializers.DateTimeField(read_only=True)
     
     class Meta:
@@ -33,25 +33,30 @@ class TeamFeedbackSerializer(serializers.ModelSerializer):
             return "Anonymous"
         return obj.user.username
     
+    def get_team_name(self, obj: Any) -> str:
+        """
+        Return team name or 'General Feedback' if no team
+        """
+        if obj.team:
+            return obj.team.team_name
+        return "General"
+    
     def create(self, validated_data: Any) -> Any:
         user = self.context["request"].user
         
         if user.is_staff:
             team_id = validated_data.pop("team", None)
             
-            if not team_id:
-                raise serializers.ValidationError(
-                    {"team": "Admin users must specify a team"}
-                )
-            
-            try:
-                team = Team.objects.get(id=team_id)
-            except Team.DoesNotExist:
-                raise serializers.ValidationError(
-                    {"team": "Team not found"}
-                )
-            
-            validated_data["team"] = team
+            if team_id:
+                try:
+                    team = Team.objects.get(id=team_id)
+                    validated_data["team"] = team
+                except Team.DoesNotExist:
+                    raise serializers.ValidationError(
+                        {"team": "Team not found"}
+                    )
+            else:
+                validated_data["team"] = None
         else:
             user_teams = user.teams.all()
             
