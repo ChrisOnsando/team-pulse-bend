@@ -23,6 +23,10 @@ from logs.views import (
     PulseLogDetailView,
     PulseLogListCreateView,
 )
+from feedback.views import (
+    TeamFeedbackListCreateView,
+    TeamFeedbackDetailView,
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -59,4 +63,9 @@ urlpatterns = [
     # Event log endpoints
     path("api/v1/event-logs/", EventLogListCreateView.as_view(), name="eventlog-list-create"),
     path("api/v1/event-logs/<uuid:id>/", EventLogDetailView.as_view(), name="eventlog-detail"),
+
+    # Team feedback endpoints
+    path("api/v1/team-feedbacks/", TeamFeedbackListCreateView.as_view(), name="feedback-list-create"),
+    path("api/v1/team-feedbacks/<uuid:id>/", TeamFeedbackDetailView.as_view(), name="feedback-detail"),
+
 ]
