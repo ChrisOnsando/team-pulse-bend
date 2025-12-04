@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from teams.models import Team
 
 User = get_user_model()
 
@@ -26,15 +27,12 @@ class UserSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(max_length=150, required=False)
     last_name = serializers.CharField(max_length=150, required=False)
     is_staff = serializers.BooleanField(read_only=True)
-    
-    teams = serializers.StringRelatedField(many=True, read_only=True)
-    
-    team_ids = serializers.ListField(
-        child=serializers.UUIDField(),
+    team = serializers.PrimaryKeyRelatedField(  
         write_only=True,
-        required=False,
-        allow_empty=True
+        required=True,  
+        queryset=Team.objects.all()
     )
+    team_name = serializers.SerializerMethodField()
     
     class Meta:
         model = User
@@ -47,20 +45,24 @@ class UserSerializer(serializers.ModelSerializer):
             "last_name",
             "is_staff",
             "is_active",
-            "teams",
-            "team_ids",
+            "team",
+            "team_name",
             "created_at",
         )
-        read_only_fields = ("id", "created_at", "is_staff")
+        read_only_fields = ("id", "created_at", "is_staff", "team_name")
+    
+    def get_team_name(self, obj: Any) -> str:
+        """Get the first team name"""
+        first_team = obj.teams.first()
+        return first_team.team_name if first_team else ""
     
     def create(self, validated_data: Any) -> Any:
-        team_ids = validated_data.pop('team_ids', [])
+        team = validated_data.pop('team', None)
+        
         user = User.objects.create_user(**validated_data)
         
-        if team_ids:
-            from teams.models import Team
-            teams = Team.objects.filter(id__in=team_ids)
-            user.teams.set(teams)
+        if team:
+            user.teams.add(team)
         
         user.save()
         return user
