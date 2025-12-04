@@ -70,14 +70,12 @@ CORS_ALLOWED_ORIGINS = config(
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    'Access-Control-Allow-Origin',
-]
+CORS_ALLOW_HEADERS = list(default_headers)
 
 # CSRF Trusted Origins (for Railway deployment)
 CSRF_TRUSTED_ORIGINS = config(
     "CSRF_TRUSTED_ORIGINS",
-    default="http://localhost:5173",
+    default="https://mary-kanyingi-pulse.netlify.app/",
     cast=lambda v: [s.strip() for s in v.split(",")]
 )
 

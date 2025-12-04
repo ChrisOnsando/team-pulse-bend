@@ -82,45 +82,23 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
 
-class UserRoleUpdateSerializer(serializers.ModelSerializer):
-    """
-    Serializer for updating user role (Admin only)
-    """
-    username = serializers.CharField(read_only=True)
-    email = serializers.EmailField(read_only=True)
-    first_name = serializers.CharField(max_length=150, required=False)
-    last_name = serializers.CharField(max_length=150, required=False)
-    is_staff = serializers.BooleanField(required=False)
+
+class LoginResponseSerializer(serializers.ModelSerializer):
+    refresh = serializers.CharField()
+    access = serializers.CharField()
     
     class Meta:
         model = User
-        fields = ("username", "email", "first_name", "last_name", "is_staff")
-        read_only_fields = ("username", "email")
-    
-    def update(self, instance: Any, validated_data: Any) -> Any:
-        instance.first_name = validated_data.get("first_name", instance.first_name)
-        instance.last_name = validated_data.get("last_name", instance.last_name)
-        instance.is_staff = validated_data.get("is_staff", instance.is_staff)
-        instance.save()
-        return instance
-    
-    def validate_is_staff(self, value: bool) -> bool:
-        """
-        Prevent user from demoting themselves if they're the only admin
-        """
-        user = self.instance
-        request_user = self.context['request'].user
-        
-        if user == request_user and user.is_staff and not value:
-            admin_count = User.objects.filter(is_staff=True).count()
-            if admin_count <= 1:
-                raise serializers.ValidationError(
-                    "Cannot demote yourself. You are the only admin."
-                )
-        
-        return value
-
+        fields = (
+            "first_name",
+            "last_name",
+            "refresh",
+            "access",
+        )
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
     
