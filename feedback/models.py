@@ -3,10 +3,9 @@ from django.conf import settings
 from django.db import models
 from app.abstracts import TimeStampedModel
 
-
 class TeamFeedback(TimeStampedModel):
     """
-    Team Feedback Model
+    Simple team feedback with just message and anonymous option
     """
     id = models.UUIDField(
         primary_key=True,
@@ -26,7 +25,7 @@ class TeamFeedback(TimeStampedModel):
         related_name="feedbacks",
         null=True,
         blank=True,
-        help_text="Team the feedback is for"
+        help_text="Team the feedback is for (optional for admins)"
     )
     message = models.TextField()
     is_anonymous = models.BooleanField(
@@ -41,7 +40,7 @@ class TeamFeedback(TimeStampedModel):
             models.Index(fields=["-created_at"]),
             models.Index(fields=["team", "is_anonymous"]),
         ]
-       
+    
     def __str__(self) -> str:
         team_name = self.team.team_name if self.team else "General"
         return f"Feedback by {self.user.username} for {team_name}"
