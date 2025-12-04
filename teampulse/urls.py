@@ -8,6 +8,7 @@ from users.views import (
     UserListView,
     UserMeView,
     UserRegisterView,
+    public_teams_list,
 )
 from teams.views import (
     TeamAddMemberView,
@@ -36,12 +37,14 @@ urlpatterns = [
     path("api/v1/auth/login/", TokenObtainPairView.as_view(), name="token-obtain"),
     path("api/v1/auth/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
     path("api/v1/auth/logout/", LogoutView.as_view(), name="user-logout"),
+    path('api/v1/auth/signup/teams/', public_teams_list, name='public-teams'), 
+
     
     # User endpoints
     path("api/v1/users/", UserListView.as_view(), name="user-list"),
     path("api/v1/users/me/", UserMeView.as_view(), name="user-me"),
     path("api/v1/users/<uuid:id>/", UserDetailView.as_view(), name="user-detail"),
-    
+
     # Team endpoints
     path("api/v1/teams/", TeamListCreateView.as_view(), name="team-list-create"),
     path("api/v1/teams/<uuid:id>/", TeamDetailView.as_view(), name="team-detail"),
