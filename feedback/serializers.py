@@ -3,8 +3,6 @@ from rest_framework import serializers
 from feedback.models import TeamFeedback
 from teams.models import Team
 
-
-
 class TeamFeedbackSerializer(serializers.ModelSerializer):
     id = serializers.CharField(read_only=True)
     username = serializers.SerializerMethodField()
