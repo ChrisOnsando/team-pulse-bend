@@ -24,7 +24,7 @@ class TeamFeedback(TimeStampedModel):
         on_delete=models.CASCADE,
         related_name="feedbacks",
         null=True,
-        blank=True,
+        blank=True,      
         help_text="Team the feedback is for (optional for admins)"
     )
     message = models.TextField()
